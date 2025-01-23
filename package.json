@@ -1,5 +1,5 @@
 {
-  "name": "vue-template-compiler",
+  "name": "vue-template-compiler-fix",
   "version": "2.6.12",
   "description": "template compiler for Vue 2.0",
   "main": "index.js",
@@ -9,7 +9,7 @@
   "types": "types/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vuejs/vue.git"
+    "url": "git+https://gion-f3/vue-template-compiler-fix.git"
   },
   "keywords": [
     "vue",
