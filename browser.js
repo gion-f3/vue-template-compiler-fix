@@ -4,6 +4,24 @@
   (global = global || self, factory(global.VueTemplateCompiler = {}));
 }(this, function (exports) { 'use strict';
 
+  function getOwnProperty(object, prop) {
+    if (typeof object !== 'object') {
+      return
+    }
+
+    let hasProp = false
+
+    if (typeof Object.hasOwn === 'function') {
+      hasProp = Object.hasOwn(object, prop)
+    } else {
+      hasProp = object.hasOwnProperty(prop)
+    }
+
+    if (hasProp) {
+      return object[prop]
+    }
+  }
+
   var splitRE = /\r?\n/g;
   var emptyRE = /^\s*$/;
   var needFixRE = /^(\r?\n)*[\t\s]/;
@@ -2158,11 +2176,13 @@
 
   function genData (el) {
     var data = '';
-    if (el.staticClass) {
-      data += "staticClass:" + (el.staticClass) + ",";
+    const staticClass = getOwnProperty(el, 'staticClass')
+    const classBinding = getOwnProperty(el, 'classBinding')
+    if (staticClass) {
+      data += "staticClass:" + (staticClass) + ",";
     }
-    if (el.classBinding) {
-      data += "class:" + (el.classBinding) + ",";
+    if (classBinding) {
+      data += "class:" + (classBinding) + ",";
     }
     return data
   }
@@ -5636,21 +5656,26 @@
       segments.push({ type: EXPRESSION, value: ("_ssrDOMProps(" + binding + ")") });
     }
     // class
-    if (el.staticClass || el.classBinding) {
+    const staticClass = getOwnProperty(el, 'staticClass')
+    const staticStyle = getOwnProperty(el, 'staticStyle')
+    const classBinding = getOwnProperty(el, 'classBinding')
+    const styleBinding = getOwnProperty(el, 'styleBinding')
+    const attrsMap = getOwnProperty(el, 'attrsMap')
+    if (staticClass || classBinding) {
       segments.push.apply(
         segments,
-        genClassSegments(el.staticClass, el.classBinding)
+        genClassSegments(staticClass, classBinding)
       );
     }
     // style & v-show
-    if (el.staticStyle || el.styleBinding || el.attrsMap['v-show']) {
+    if (staticStyle || styleBinding || attrsMap['v-show']) {
       segments.push.apply(
         segments,
         genStyleSegments(
-          el.attrsMap.style,
-          el.staticStyle,
-          el.styleBinding,
-          el.attrsMap['v-show']
+          attrsMap.style,
+          staticStyle,
+          styleBinding,
+          attrsMap['v-show']
         )
       );
     }
